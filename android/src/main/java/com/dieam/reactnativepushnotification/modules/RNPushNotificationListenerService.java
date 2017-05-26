@@ -3,10 +3,12 @@ package com.dieam.reactnativepushnotification.modules;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningAppProcessInfo;
 import android.app.Application;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.Log;
+import android.view.WindowManager;
 
 import com.dieam.reactnativepushnotification.helpers.ApplicationBadgeHelper;
 import com.facebook.react.ReactApplication;
@@ -23,6 +25,7 @@ import java.util.Random;
 import static com.dieam.reactnativepushnotification.modules.RNPushNotification.LOG_TAG;
 
 public class RNPushNotificationListenerService extends GcmListenerService {
+    private final static String TAG = "RNPushNotificationListenerService";
 
     @Override
     public void onMessageReceived(String from, final Bundle bundle) {
@@ -107,11 +110,32 @@ public class RNPushNotificationListenerService extends GcmListenerService {
 
         Log.v(LOG_TAG, "sendNotification: " + bundle);
 
-        if (!isForeground) {
+        if (!isForeground && !filterCall(context, bundle)) {
             Application applicationContext = (Application) context.getApplicationContext();
             RNPushNotificationHelper pushNotificationHelper = new RNPushNotificationHelper(applicationContext);
             pushNotificationHelper.sendToNotificationCentre(bundle);
         }
+    }
+
+    private boolean filterCall(ReactApplicationContext context, Bundle bundle) {
+        try {
+            Log.d(TAG, "filterCall: " + bundle);
+            String metaStr = bundle.getString("meta");
+            if (metaStr == null) return false;
+            JSONObject meta = new JSONObject(metaStr);
+            String type = meta.getString("type");
+            if (type.equals("call")) {
+                String className = "com.tamtamreactnative.CallService";
+                Intent intent = new Intent(context, Class.forName(className));
+                intent.putExtras(bundle);
+                Log.i(TAG, "Send bundle to service " + className);
+                context.startService(intent);
+                return true;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     private boolean isApplicationInForeground() {
