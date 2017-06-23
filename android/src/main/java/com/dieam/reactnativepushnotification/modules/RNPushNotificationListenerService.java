@@ -110,7 +110,7 @@ public class RNPushNotificationListenerService extends GcmListenerService {
 
         Log.v(LOG_TAG, "sendNotification: " + bundle);
 
-        if (!isForeground && !filterCall(context, bundle)) {
+        if (!filterCall(context, bundle) && !isForeground) {
             Application applicationContext = (Application) context.getApplicationContext();
             RNPushNotificationHelper pushNotificationHelper = new RNPushNotificationHelper(applicationContext);
             pushNotificationHelper.sendToNotificationCentre(bundle);
@@ -127,7 +127,10 @@ public class RNPushNotificationListenerService extends GcmListenerService {
             if (type.equals("call")) {
                 String className = "com.tamtamreactnative.CallService";
                 Intent intent = new Intent(context, Class.forName(className));
-                intent.putExtras(bundle);
+                Bundle extras = new Bundle();
+                extras.putString("type", "push");
+                extras.putBundle("data", bundle);
+                intent.putExtras(extras);
                 Log.i(TAG, "Send bundle to service " + className);
                 context.startService(intent);
                 return true;
