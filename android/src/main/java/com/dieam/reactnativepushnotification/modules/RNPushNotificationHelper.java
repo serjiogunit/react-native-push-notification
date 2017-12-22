@@ -275,12 +275,15 @@ public class RNPushNotificationHelper {
 
             notification.setContentIntent(pendingIntent);
 
-            if (!bundle.containsKey("vibrate") || bundle.getBoolean("vibrate")) {
-                long vibration = bundle.containsKey("vibration") ? (long) bundle.getDouble("vibration") : DEFAULT_VIBRATION;
-                if (vibration == 0)
-                    vibration = DEFAULT_VIBRATION;
-                notification.setVibrate(new long[]{0, vibration});
+            if (bundle.containsKey("vibration") && bundle.getString("vibration").equals("true")) {
+                notification.setVibrate(new long[]{0, DEFAULT_VIBRATION});
             }
+//            if (!bundle.containsKey("vibrate") || bundle.getBoolean("vibrate")) {
+//                long vibration = bundle.containsKey("vibration") ? (long) bundle.getDouble("vibration") : DEFAULT_VIBRATION;
+//                if (vibration == 0)
+//                    vibration = DEFAULT_VIBRATION;
+//                notification.setVibrate(new long[]{0, vibration});
+//            }
 
             JSONArray actionsArray = null;
             try {
