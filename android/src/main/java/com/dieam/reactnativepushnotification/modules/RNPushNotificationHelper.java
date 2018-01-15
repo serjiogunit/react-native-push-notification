@@ -338,6 +338,7 @@ public class RNPushNotificationHelper {
                 String tag = bundle.getString("tag");
                 notificationManager.notify(tag, notificationID, info);
             } else {
+                Log.i(LOG_TAG, "notify " + notificationID);
                 notificationManager.notify(notificationID, info);
             }
 
@@ -407,6 +408,13 @@ public class RNPushNotificationHelper {
 
         NotificationManager notificationManager = notificationManager();
         notificationManager.cancelAll();
+    }
+
+    public void cancelNotification(int id) {
+        Log.i(LOG_TAG, "Cancel alert from the notification centre " + id);
+
+        NotificationManager notificationManager = notificationManager();
+        notificationManager.cancel(id);
     }
 
     public void cancelAllScheduledNotifications() {

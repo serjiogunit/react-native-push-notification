@@ -286,6 +286,10 @@ Notifications.cancelLocalNotifications = function() {
 	return this.callNative('cancelLocalNotifications', arguments);
 };
 
+Notifications.cancelNotification = function() {
+	return this.callNative('cancelNotification', arguments);
+};
+
 Notifications.cancelAllLocalNotifications = function() {
 	return this.callNative('cancelAllLocalNotifications', arguments);
 };
