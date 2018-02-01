@@ -3,7 +3,10 @@ package com.dieam.reactnativepushnotification.modules;
 import android.app.ActivityManager;
 import android.app.ActivityManager.RunningAppProcessInfo;
 import android.app.Application;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -68,7 +71,18 @@ public class RNPushNotificationListenerService extends GcmListenerService {
                     // Otherwise wait for construction, then send the notification
                     mReactInstanceManager.addReactInstanceEventListener(new ReactInstanceManager.ReactInstanceEventListener() {
                         public void onReactContextInitialized(ReactContext context) {
-                            handleRemotePushNotification((ReactApplicationContext) context, bundle);
+                            final ReactApplicationContext reactAppContext = (ReactApplicationContext) context;
+
+                            IntentFilter intentFilter = new IntentFilter(reactAppContext.getPackageName() + ".RNPushNotificationRegisteredToken");
+
+                            reactAppContext.registerReceiver(new BroadcastReceiver() {
+                                @Override
+                                public void onReceive(Context context, Intent intent) {
+                                    Log.v(LOG_TAG, "Registered: " + bundle);
+
+                                    handleRemotePushNotification(reactAppContext, bundle);
+                                }
+                            }, intentFilter);
                         }
                     });
                     if (!mReactInstanceManager.hasStartedCreatingInitialContext()) {
