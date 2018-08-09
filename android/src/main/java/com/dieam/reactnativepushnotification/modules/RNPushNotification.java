@@ -7,6 +7,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.NotificationManagerCompat;
 
@@ -118,9 +119,13 @@ public class RNPushNotification extends ReactContextBaseJavaModule implements Ac
         ReactContext reactContext = getReactApplicationContext();
 
         Intent GCMService = new Intent(reactContext, RNPushNotificationRegistrationService.class);
-
         GCMService.putExtra("senderID", senderID);
-        reactContext.startService(GCMService);
+
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
+            reactContext.startService(GCMService);
+        } else {
+            reactContext.startForegroundService(GCMService);
+        }
     }
 
     @ReactMethod

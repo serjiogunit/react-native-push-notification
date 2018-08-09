@@ -1,7 +1,9 @@
 package com.dieam.reactnativepushnotification.modules;
 
 import android.app.IntentService;
+import android.app.Notification;
 import android.content.Intent;
+import android.os.Build;
 import android.util.Log;
 
 import com.google.android.gms.gcm.GoogleCloudMessaging;
@@ -27,6 +29,11 @@ public class RNPushNotificationRegistrationService extends IntentService {
             sendRegistrationToken(token);
         } catch (Exception e) {
             Log.e(LOG_TAG, TAG + " failed to process intent " + intent, e);
+        }
+
+        int NOTIFICATION_ID = (int) (System.currentTimeMillis()%10000);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            startForeground(NOTIFICATION_ID, new Notification.Builder(this).build());
         }
     }
 
