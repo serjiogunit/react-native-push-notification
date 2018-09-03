@@ -140,7 +140,7 @@ public class RNPushNotificationListenerService extends GcmListenerService {
             JSONObject meta = new JSONObject(metaStr);
             String type = meta.getString("type");
             if (type.equals("call")) {
-                String className = "com.tamtamreactnative.CallService";
+                String className = "io.pararam.CallService";
                 Intent intent = new Intent(context, Class.forName(className));
                 Bundle extras = new Bundle();
                 extras.putString("type", "push");
